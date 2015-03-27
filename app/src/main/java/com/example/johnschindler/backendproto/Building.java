@@ -1,29 +1,63 @@
 package com.example.johnschindler.backendproto;
 
-import java.util.ArrayList;
+import android.graphics.Bitmap;
+
+import com.parse.ParseClassName;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
+
+import java.util.HashMap;
 
 /**
  * Created by johnschindler on 2/28/15.
  */
-public class Building {
 
-    private String mName;
-    private ArrayList<FloorPlan> mFloorPlans = new ArrayList<FloorPlan>();
+@ParseClassName("Building")
+public class Building extends ParseObject {
 
-    public Building(String name, ArrayList<FloorPlan> floorPlans ){
+   private HashMap<String, Bitmap> imageMap = new HashMap<String, Bitmap>();
+   private HashMap<String, String> urlMap = new HashMap<String, String>();
+   private String floorInFocus;
 
-        mName = name;
-        mFloorPlans = floorPlans;
-
+    public Building() {
     }
 
-    public Building(String name){
-        mName = name;
+   /* public void setURL(String url) {
+        put("URL", url);
     }
 
+    public String getURL() {
+        return getString("URL");
+    }
 
+    public void setBuilding(String building) {
+        put("building", building);
+    }*/
 
+    public HashMap<String, String> getURLMap(){
+        if(urlMap == null)
+            urlMap = new HashMap<>();
 
+        return urlMap;
+    }
 
+    public HashMap<String, Bitmap> getImageMap(){
+        if(imageMap == null)
+            imageMap = new HashMap<>();
+
+        return imageMap;
+    }
+
+    public void setFloorInFocus(String floor){
+        floorInFocus = floor;
+    }
+
+    public String getFloorInFocus(){
+        return floorInFocus;
+    }
+
+    public String getBuilding() {
+        return getString("building");
+    }
 
 }

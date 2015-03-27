@@ -1,11 +1,14 @@
 package com.example.johnschindler.backendproto;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -29,124 +32,79 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    private ParseImageView floorView;
+    //private ParseImageView floorView;
 
-    private static final String TAG = "*** DEBUG ***";
+    private static final String TAG = "*** MainActivity ***";
+    private Button mGDCButton;
+    private Button mRLMButton;
+
+    public enum BuildingId {RLM, GDC}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ParseObject.registerSubclass(FloorPlan.class);
+        //mock for search, two buttons
+        mGDCButton = (Button) findViewById(R.id.GDC);
+        mRLMButton = (Button) findViewById(R.id.RLM);
+        mRLMButton.setEnabled(true);
+        mGDCButton.setEnabled(true);
+        Intent intent = new Intent(this, BuildingActivity.class);
+        //Using String not enum rn
+        //mRLMButton.setOnClickListener(new ButtonClickListener(BuildingId.RLM, intent));
+        //mGDCButton.setOnClickListener(new ButtonClickListener(BuildingId.GDC, intent));
+        mRLMButton.setOnClickListener(new ButtonClickListener("WRW_01", intent));
+        mGDCButton.setOnClickListener(new ButtonClickListener("WRW_01", intent));
+
+
+        //ParseObject.registerSubclass(Building.class);
+        //ParseObject.registerSubclass(BuildingJSON.class);
         Parse.initialize(this, "xTzPEGb9UXNKHH6lEphikPyDpfXeSinJ9HoIqODU", "tmEVaWNvPic1VQd2c69Zn0u6gieingOJcMIF6zrD");
 
         //privacy settings
         ParseACL defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+        BuildingData bd = new BuildingData();
 
-        floorView = (ParseImageView) findViewById(R.id.floor_view);
-
-        ParseQuery<FloorPlan> query = ParseQuery.getQuery("FloorPlan");
-        //query = query.whereEqualTo("floor", )
-
-        //query.getInBackground("xBMhHgRa7v", new GetCallback<FloorPlan>() {
-        query.getInBackground("xBMhHgRa7v", new GetCallback<FloorPlan>() {
-            @Override
-            public void done(FloorPlan parseObject, ParseException e) {
-            @Override
-            public void done(FloorPlan parseObject, ParseException e) {
-
-            Log.d(TAG, "IN done");
-
-
-                if(parseObject == null)
-                    Log.d(TAG, "parseObjectNull");
-                if(e != null)
-                    Log.d(TAG, "parseException => " + e);
-
-
-                ParseFile photo = parseObject.getParseFile("picture");
-
-                if(photo == null)
-                    Log.d(TAG, "photo is null");
-
-
-                //ParseFile photo2 = parseObject.getPhoto();
-                //if(photo2 == null)
-                    //Log.d(TAG, "photo2 is null");
-
-
-                if(photo != null) {
-                    floorView.setParseFile(photo);
-                    floorView.loadInBackground(new GetDataCallback() {
-                        @Override
-                        public void done(byte[] data, ParseException e) {
-                            //Log.d(TAG, "in Done for loadInBackground");
-                            floorView.setVisibility(View.VISIBLE);
-
-
-                            if(data != null)
-                                Log.d(TAG, "Length => " + data.length);
-
-                            if(e != null) {
-                                Log.d(TAG,
-                                        "exception: " + e.getMessage());
-
-                                Log.d(TAG,
-                                        "2 exception: " + e);
-                                        //e.printStackTrace();
-                            }
-
-                            Log.d(TAG, "After");
-                        }
-                    });
-                }
-
-            }
-        });
-        }
-
-
-
-/*ParseImageView imageView = (ParseImageView) findViewById(android.R.id.icon);
- // The placeholder will be used before and during the fetch, to be replaced by the fetched image
- // data.
- imageView.setPlaceholder(getResources().getDrawable(R.drawable.placeholder));
- imageView.setParseFile(file);
- imageView.loadInBackground(new GetDataCallback() {
-   @Override
-   public void done(byte[] data, ParseException e) {
-     Log.i("ParseImageView",
-         "Fetched! Data length: " + data.length + ", or exception: " + e.getMessage());
-   }
- });*/
-
-
-
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private class ButtonClickListener implements View.OnClickListener {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+
+        //BuildingId building;
+        String building;
+        Intent intent;
+
+        //Using string for now
+        public ButtonClickListener(String building, Intent intent) {
+            //public ButtonClickListener(String, Intent intent){
+            this.building = building;
+            this.intent = intent;
         }
 
-        return super.onOptionsItemSelected(item);
+        public void onClick(View view) {
+            this.intent.putExtra("building", this.building);
+            startActivity(this.intent);
+        }
+
     }
 }
+
+    /*private void prepDownloadImageActivity(int winner, String message){
+
+        Intent intent = new Intent(this, BuildingActivity.class);
+        intent.putExtra("Building", this.chosenBuilding);
+        intent.putExtra("message", message);
+        startActivity(intent);
+
+    }*/
+
+
+
+
+
+
+
+
